@@ -2,6 +2,7 @@ package tingeso.autofix.controllers;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tingeso.autofix.entities.ReparacionEntity;
 import tingeso.autofix.services.ReparacionService;
@@ -66,6 +67,18 @@ public class ReparacionController {
     public ReparacionEntity updateMonto(@PathVariable Long reparacionId) {
         ReparacionEntity reparacion = reparacionService.findById(reparacionId);
         return reparacionService.updateMontoTotal(reparacion);
+    }
+
+    @PutMapping("/reparacion")
+    public ResponseEntity<ReparacionEntity> updateReparacion(@RequestBody ReparacionEntity reparacion){
+        ReparacionEntity reparacionUpdated = reparacionService.updateReparacion(reparacion);
+        return ResponseEntity.ok(reparacionUpdated);
+    }
+
+    @DeleteMapping("/reparacion/{reparacionId}")
+    public ResponseEntity<Boolean> deleteReparacionById(@PathVariable Long id) throws Exception {
+        var isDeleted = reparacionService.deleteReparacion(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

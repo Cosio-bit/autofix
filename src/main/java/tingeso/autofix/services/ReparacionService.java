@@ -52,6 +52,20 @@ public class ReparacionService {
         return reparacion;
     }
 
+    public ReparacionEntity updateReparacion(ReparacionEntity reparacion) {
+        return reparacionRepository.save(reparacion);
+    }
+
+
+    public boolean deleteReparacion(Long id) throws Exception {
+        try {
+            reparacionRepository.deleteById(id);
+            return true;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
 
     public ReparacionEntity findById(Long reparacionId) {
         Optional<ReparacionEntity> optionalReparacion = reparacionRepository.findById(reparacionId);

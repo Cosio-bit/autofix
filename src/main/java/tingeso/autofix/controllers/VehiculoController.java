@@ -49,7 +49,7 @@ public class VehiculoController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/vehiculo/{id}")
+    @PutMapping("/vehiculo")
     public ResponseEntity<VehiculoEntity> updateVehiculo(@RequestBody VehiculoEntity vehiculo){
         VehiculoEntity vehiculo1 = vehiculoService.updateVehiculo(vehiculo);
         return ResponseEntity.ok(vehiculo1);
