@@ -76,8 +76,8 @@ public class ReparacionController {
     }
 
     @DeleteMapping("/reparacion/{reparacionId}")
-    public ResponseEntity<Boolean> deleteReparacionById(@PathVariable Long id) throws Exception {
-        var isDeleted = reparacionService.deleteReparacion(id);
+    public ResponseEntity<Boolean> deleteReparacionById(@PathVariable Long reparacionId) throws Exception {
+        var isDeleted = reparacionService.deleteReparacion(reparacionId);
         return ResponseEntity.noContent().build();
     }
 
