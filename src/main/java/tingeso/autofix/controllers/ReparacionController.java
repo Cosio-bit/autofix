@@ -39,14 +39,14 @@ public class ReparacionController {
         return Optional.empty();
     }
 
-    @PostMapping("/crearReparacion/{idVehiculo}")
-    public ReparacionEntity guardarReparacion(
+    @PostMapping("/crearReparacion")
+    public ReparacionEntity nuevaReparacion(
             @RequestBody ReparacionEntity reparacion) {
         return reparacionService.guardarReparacion(reparacion);
     }
 
-    @GetMapping("/crearReparacion/{idVehiculo}")
-    public ReparacionEntity VehiculoForm(@PathVariable String idVehiculo) {
+    @GetMapping("/crearReparacion")
+    public ReparacionEntity VehiculoForm() {
         return new ReparacionEntity();
     }
 
