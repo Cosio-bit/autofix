@@ -50,19 +50,6 @@ public class ReparacionController {
         return new ReparacionEntity();
     }
 
-
-    @PutMapping("/reparacion/{reparacionId}/salida")
-    public ReparacionEntity updateSalidaDateAndTime(@PathVariable Long reparacionId) {
-        ReparacionEntity reparacion = reparacionService.findById(reparacionId);
-        return reparacionService.updateReparacionSalida(reparacion);
-    }
-
-    @PutMapping("/reparacion/{reparacionId}/retiro")
-    public ReparacionEntity updateRetiroDateAndTime(@PathVariable Long reparacionId) {
-        ReparacionEntity reparacion = reparacionService.findById(reparacionId);
-        return reparacionService.updateReparacionRetiro(reparacion);
-    }
-
     @PutMapping("/reparacion/{reparacionId}/monto")
     public ReparacionEntity updateMonto(@PathVariable Long reparacionId) {
         ReparacionEntity reparacion = reparacionService.findById(reparacionId);
