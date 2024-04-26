@@ -15,6 +15,8 @@ public class ReparacionService {
     ReparacionRepository reparacionRepository;
     @Autowired
     VehiculoService vehiculoService;
+    @Autowired
+    PagoService pagoService;
 
     public ArrayList<ReparacionEntity> obtenerReparaciones(){
         return (ArrayList<ReparacionEntity>) reparacionRepository.findAll();
@@ -50,9 +52,11 @@ public class ReparacionService {
     }
 
     public ReparacionEntity updateMontoTotal(ReparacionEntity reparacion){
-        reparacion.setMontoTotal(reparacion.getMontoTotal());
+        pagoService.totalPagar(reparacion);
         return reparacion;
     }
+
+
 
 
 }

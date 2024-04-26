@@ -19,7 +19,7 @@ public class MarcaController {
         @Autowired
         private MarcaService marcaService;
     
-        @GetMapping("/")
+        @GetMapping("/marca/{id}")
         public List<MarcaEntity> listar() {
             return marcaService.obtenerMarcas();
         }
@@ -34,13 +34,13 @@ public class MarcaController {
             return Optional.empty();
         }
     
-        @PostMapping("/crearMarca")
+        @PostMapping("/marca")
         public MarcaEntity nuevaMarca(
                 @RequestBody MarcaEntity marca) {
             return marcaService.guardarMarca(marca);
         }
     
-        @GetMapping("/crearMarca")
+        @GetMapping("/marca")
         public MarcaEntity MarcaForm() {
             return new MarcaEntity();
         }
