@@ -235,6 +235,7 @@ public int recargoDiasDesdeSalida(ReparacionEntity reparacion){
 public int descuentos(ReparacionEntity reparacion){
     return descuentoCantidadReparaciones(reparacion) + descuentoDiaAtencion(reparacion);
     }
+
 public int recargos(ReparacionEntity reparacion){
     if (reparacion.getFechaHoraSalida() == null || reparacion.getFechaHoraRetiro() == null) {
         return recargoKilometraje(reparacion) + recargoAntiguedadVehiculo(reparacion);
@@ -244,6 +245,6 @@ public int recargos(ReparacionEntity reparacion){
 
 public int totalPagar(ReparacionEntity reparacion){
     int monto = precioReparacionVSMotor(reparacion);
-    return monto - monto*descuentos(reparacion) + monto*recargos(reparacion) + descuentoMarca(reparacion);
+    return (monto - monto*descuentos(reparacion) + monto*recargos(reparacion) + descuentoMarca(reparacion));
     }
 }

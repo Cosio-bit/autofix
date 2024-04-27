@@ -27,10 +27,8 @@ public class ReparacionService {
     }
 
     public ReparacionEntity guardarReparacion(ReparacionEntity reparacion){
-        reparacionRepository.save(reparacion);
-        return reparacion;
+        return reparacionRepository.save(reparacion);
     }
-
 
     public ReparacionEntity updateReparacion(ReparacionEntity reparacion) {
         return reparacionRepository.save(reparacion);
@@ -52,7 +50,8 @@ public class ReparacionService {
     }
 
     public ReparacionEntity updateMontoTotal(ReparacionEntity reparacion){
-        pagoService.totalPagar(reparacion);
+        reparacion.setMontoTotal(pagoService.totalPagar(reparacion));
+        reparacionRepository.save(reparacion);
         return reparacion;
     }
 

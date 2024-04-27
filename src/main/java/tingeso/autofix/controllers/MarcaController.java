@@ -19,12 +19,12 @@ public class MarcaController {
         @Autowired
         private MarcaService marcaService;
     
-        @GetMapping("/marca/{id}")
+        @GetMapping("/")
         public List<MarcaEntity> listar() {
             return marcaService.obtenerMarcas();
         }
-    
-        @GetMapping("/{id}")
+
+        @GetMapping("/marca/{id}")
         public Optional<MarcaEntity> mostrarMarca(@PathVariable Long id) {
             Optional<MarcaEntity> marca = Optional.ofNullable(marcaService.findById(id));
             if (marca.isPresent()) {
