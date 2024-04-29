@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -25,6 +26,20 @@ public class MarcaService {
     }
 
     public MarcaEntity guardarMarca(MarcaEntity marca){
+        int mes = marca.getFechaBono().getMonth().getValue();
+        int anio = marca.getFechaBono().getYear();
+        LocalDateTime fecha = LocalDateTime.of(anio, mes, 1, 0, 0);
+        marca.setFechaBono(fecha);
+
+        //si la marca ya existe para la fecha, sobre escribir la cantidad de bonos
+        Optional<MarcaEntity> optionalMarca = Optional.ofNullable(marcaRepository.findByNombreAndFechaBono(marca.getFechaBono(), marca.getNombre()));
+        if (optionalMarca.isPresent()) {
+            MarcaEntity marcaExistente = optionalMarca.get();
+            marcaExistente.setCantidadBonos(marcaExistente.getCantidadBonos() + marca.getCantidadBonos());
+            marcaRepository.save(marcaExistente);
+            return marcaExistente;
+        }
+        
         marcaRepository.save(marca);
         return marca;
     }
@@ -47,21 +62,24 @@ public class MarcaService {
         return optionalMarca.orElse(null);
     }
 
-    public MarcaEntity findByNombre(String nombre) {
+    public Optional<MarcaEntity> findByNombre(String nombre) {
         Optional<MarcaEntity> optionalMarca = marcaRepository.findByNombre(nombre);
-        return optionalMarca.orElse(null);
+        return Optional.ofNullable(optionalMarca.orElse(null));
     }
 
-    public MarcaEntity findByFechaBonoMarca(String fechaBono, String marca) {
-        Optional<MarcaEntity> optionalMarca = marcaRepository.findByFechaBonoMarca(fechaBono, marca);
+    public MarcaEntity findByFechaBonoMarca(LocalDateTime fechaBono, String marca) {
+        //print in the console
+        System.out.println("fechaBono: " + fechaBono);
+        System.out.println("marca: " + marca);
+        MarcaEntity optionalMarca = marcaRepository.findByNombreAndFechaBono(fechaBono, marca);
         //si la marca no existe o no le quedan bonos, retornar null
-        if (!optionalMarca.isPresent() || optionalMarca.get().getCantidadBonos() == 0) {
+        if (optionalMarca == null || optionalMarca.getCantidadBonos() == 0) {
             return null;
         }
-        optionalMarca.get().setCantidadBonos(optionalMarca.get().getCantidadBonos() - 1);
-        marcaRepository.save(optionalMarca.get());
+        optionalMarca.setCantidadBonos(optionalMarca.getCantidadBonos() - 1);
+        marcaRepository.save(optionalMarca);
 
-        return optionalMarca.orElse(null);
+        return optionalMarca;
     }
 
     //ejemplo de cada linea a procesar Toyota: 5 bonos de 70.000 pesos

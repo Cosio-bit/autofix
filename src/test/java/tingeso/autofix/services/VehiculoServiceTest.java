@@ -2,22 +2,21 @@
 package tingeso.autofix.services;
 
 import tingeso.autofix.entities.VehiculoEntity;
-import tingeso.autofix.services.VehiculoService;
-import tingeso.autofix.repositories.VehiculoRepository;
-
-import java.util.Optional;
-
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
 class VehiculoServiceTest {
-   VehiculoService vehiculoService = new VehiculoService();
-   VehiculoEntity vehiculo = new VehiculoEntity();
-   VehiculoRepository vehiculoRepository = Mockito.mock(VehiculoRepository.class);
 
-   VehiculoServiceTest() {
-   }
+   @Autowired
+   private VehiculoService vehiculoService;
+   VehiculoEntity vehiculo = new VehiculoEntity();
 
    @Test
    void whenGuardarVehiculo_thenVehiculoGuardado() {
@@ -30,7 +29,7 @@ class VehiculoServiceTest {
       this.vehiculo.setNroAsientos(5);
       this.vehiculo.setKilometraje(20000);
       VehiculoEntity vehiculoEntity = this.vehiculoService.guardarVehiculo(vehiculo);
-      Assertions.assertThat(vehiculoEntity).isEqualTo(this.vehiculo);
+      assertThat(vehiculoEntity).isEqualTo(this.vehiculo);
    }
 
    @Test
@@ -45,7 +44,7 @@ class VehiculoServiceTest {
       this.vehiculo.setKilometraje(20000);
       this.vehiculoService.guardarVehiculo(vehiculo);
       String patente = this.vehiculoService.obtenerPorPatente("GHI789").get().getPatente();
-      Assertions.assertThat(patente).isEqualTo("GHI789");
+      assertThat(patente).isEqualTo("GHI789");
    }
 
    @Test
@@ -60,7 +59,7 @@ class VehiculoServiceTest {
       this.vehiculo.setKilometraje(20000);
       this.vehiculoService.guardarVehiculo(vehiculo);
       Long id = this.vehiculoService.obtenerPorId(1L).getId();
-      Assertions.assertThat(id).isEqualTo(1L);
+      assertThat(id).isEqualTo(1L);
    }
 
    @Test
@@ -75,8 +74,8 @@ class VehiculoServiceTest {
       this.vehiculo.setKilometraje(20000);
       this.vehiculoService.guardarVehiculo(vehiculo);
 
-      VehiculoEntity vehiculo1 = this.vehiculoService.obtenerVehiculos().get(0);
-      Assertions.assertThat(vehiculo).isEqualTo(vehiculo1);
+      VehiculoEntity vehiculo1 = this.vehiculoService.obtenerVehiculos().get(4);
+      assertThat(vehiculo).isEqualTo(vehiculo1);
    }
 
    @Test
@@ -94,7 +93,7 @@ class VehiculoServiceTest {
       VehiculoEntity vehiculo2 = this.vehiculoService.obtenerPorPatente("GHI789").get();
       vehiculo2.setPatente("GHI788");
       this.vehiculoService.updateVehiculo(vehiculo2);
-      Assertions.assertThat(vehiculo2.getPatente()).isEqualTo("GHI788");
+      assertThat(vehiculo2.getPatente()).isEqualTo("GHI788");
    }
 
 }

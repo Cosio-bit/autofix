@@ -21,230 +21,229 @@ public class PagoService {
     @Autowired
     MarcaService marcaService;
 
-// Definir una matriz de precios donde las filas representan los tipos de reparaciones
+    // Definir una matriz de precios donde las filas representan los tipos de reparaciones
 // y las columnas representan los tipos de motor.
-int[][] preciosMotor = {
-    // tipo de motor 1, 2, 3, 4 respectivamente
-    {10, 20, 30, 40}, // reparación tipo 1
-    {15, 25, 35, 45}, // reparación tipo 2
-    {12, 22, 32, 42}, // reparación tipo 3
-    {12, 22, 32, 42}, // reparación tipo 4
-    {12, 22, 32, 42}, // reparación tipo 5
-    {12, 22, 32, 42}, // reparación tipo 6
-    {12, 22, 32, 42}, // reparación tipo 7
-    {12, 22, 32, 42}, // reparación tipo 8
-    {12, 22, 32, 42}, // reparación tipo 9
-    {12, 22, 32, 42}, // reparación tipo 10
-    {12, 22, 32, 42}, // reparación tipo 11
+    double[][] preciosMotor = {
+            // tipo de motor 1, 2, 3, 4 respectivamente
+            {120000, 120000, 180000, 220000},
+            {130000, 130000, 190000, 230000},
+            {350000, 450000, 700000, 800000},
+            {210000, 210000, 300000, 300000},
+            {150000, 150000, 200000, 250000},
+            {100000, 120000, 450000, 0},
+            {100000, 100000, 100000, 100000},
+            {180000, 180000, 210000, 250000},
+            {150000, 150000, 180000, 180000},
+            {130000, 140000, 220000, 0},
+            {80000, 80000, 80000, 80000}
 
-};
+    };
 
-int [][] descuentosMotor = {
-        // tipo de motor 1, 2, 3, 4 respectivamente
-        {10, 20, 30, 40}, // cantidad de reparaciones
-        {15, 25, 35, 45}, // cantidad de reparaciones
-        {12, 22, 32, 42}, // cantidad de reparaciones
-        {12, 22, 32, 42}, // cantidad de reparaciones
-        {12, 22, 32, 42}, // cantidad de reparaciones
-        {12, 22, 32, 42}, // cantidad de reparaciones
-        {12, 22, 32, 42}, // cantidad de reparaciones
-        {12, 22, 32, 42}, // cantidad de reparaciones
-        {12, 22, 32, 42}, // cantidad de reparaciones
-        {12, 22, 32, 42}, // cantidad de reparaciones
-};
+    double[][] descuentosMotor = {
+            // tipo de motor 1, 2, 3, 4 respectivamente
+            {0.05, 0.07, 0.10, 0.08}, // 1
+            {0.05, 0.07, 0.10, 0.08}, // 2
+            {0.10, 0.12, 0.15, 0.13}, // 3
+            {0.10, 0.12, 0.15, 0.13}, // 4
+            {0.10, 0.12, 0.15, 0.13}, // 5
+            {0.15, 0.17, 0.20, 0.18}, // 6
+            {0.15, 0.17, 0.20, 0.18}, // 7
+            {0.15, 0.17, 0.20, 0.18}, // 8
+            {0.15, 0.17, 0.20, 0.18}, // 9
+            {0.20, 0.22, 0.25, 0.23}  // 10
+    };
 
-int [][] recargoKilometraje ={
-    // tipos de autos 1,2,3,4,5 respectivamente
-        {10, 20, 30, 40, 50}, // cantidad de Kilometros
-        {15, 25, 35, 45, 50}, // cantidad de Kilometros
-        {12, 22, 32, 42, 50}, // cantidad de 
-        {12, 22, 32, 42, 50}, // cantidad de
+    double[][] recargoKilometraje = {
+            // tipos de autos 1,2,3,4,5 respectivamente
+            {0.00, 0.00, 0.00, 0.00, 0.00}, // 0 – 5.000
+            {0.03, 0.03, 0.05, 0.05, 0.05}, // 5.001 – 12.000
+            {0.07, 0.07, 0.09, 0.09, 0.09}, // 12.001 – 25.000
+            {0.12, 0.12, 0.12, 0.12, 0.12}, // 25.001 – 40.000
+            {0.20, 0.20, 0.20, 0.20, 0.20}  // 40.000 – más
 
-};
+    };
 
-int [][] recargoAntiguedad ={
-    // tipos de autos 1,2,3,4,5 respectivamente
-        {10, 20, 30, 40, 50}, // años de antiguedad
-        {15, 25, 35, 45, 50}, // años de antiguedad
-        {12, 22, 32, 42, 50}, // años de antiguedad
-        {12, 22, 32, 42, 50}, // años de antiguedad
-};
+    double[][] recargoAntiguedad = {
+            // tipos de autos 1,2,3,4,5 respectivamente
+            {0.00, 0.00, 0.00, 0.00, 0.00}, // 0 – 5
+            {0.05, 0.05, 0.07, 0.07, 0.07}, // 6 – 10
+            {0.09, 0.09, 0.11, 0.11, 0.11}, // 11 – 15
+            {0.15, 0.15, 0.20, 0.20, 0.20}  // 16 – más
+    };
 
-String [] motores = {"Gasolina", "Diésel", "Híbrido", "Eléctrico"};
+    String[] motores = {"Gasolina", "Diésel", "Híbrido", "Eléctrico"};
 
-String [] marcas = {"Toyota", "Kia", "Honda", "Ford", "Chevrolet", "Hyundai"};
-
-String [] tipoAuto = {"Sedán", "Hatchback", "SUV", "Pickup", "Furgoneta"};
+    String[] tipoAuto = {"Sedán", "Hatchback", "SUV", "Pickup", "Furgoneta"};
 
 
-public int numeroMotor(ReparacionEntity reparacion) {
-    //obtener el tipo de motor del vehiculo
-    String motor = vehiculoService.obtenerPorId(Long.valueOf(reparacion.getIdVehiculo())).getTipoMotor();
-    int motorNum = 0;
-    for (int i = 0; i < motores.length; i++) {
-        if (motores[i].equals(motor)) {
-            motorNum = i;
-            break;
+    public int numeroMotor(ReparacionEntity reparacion) {
+        //obtener el tipo de motor del vehiculo
+        String motor = vehiculoService.obtenerPorId(Long.valueOf(reparacion.getIdVehiculo())).getTipoMotor();
+        int motorNum = 0;
+        for (int i = 0; i < motores.length; i++) {
+            if (motores[i].equals(motor)) {
+                motorNum = i;
+                break;
+            }
         }
+        return motorNum;
     }
-    return motorNum;
-}
 
-public int numeroMarca(ReparacionEntity reparacion) {
-    //obtener la marca del vehiculo
-    String marca = vehiculoService.obtenerPorId(Long.valueOf(reparacion.getIdVehiculo())).getMarca();
-    int marcaNum = 0;
-    for (int i = 0; i < marcas.length; i++) {
-        if (marcas[i].equals(marca)) {
-            marcaNum = i;
-            break;
+
+    public int numeroTipoVehiculo(ReparacionEntity reparacion) {
+        //obtener el tipo de auto del vehiculo
+        String tipo = vehiculoService.obtenerPorId(Long.valueOf(reparacion.getIdVehiculo())).getTipoVehiculo();
+        int tipoNum = 0;
+        for (int i = 0; i < tipoAuto.length; i++) {
+            if (tipoAuto[i].equals(tipo)) {
+                tipoNum = i;
+                break;
+            }
         }
+        return tipoNum;
     }
-    return marcaNum;
-}
 
-public int numeroTipoVehiculo(ReparacionEntity reparacion) {
-    //obtener el tipo de auto del vehiculo
-    String tipo = vehiculoService.obtenerPorId(Long.valueOf(reparacion.getIdVehiculo())).getTipoVehiculo();
-    int tipoNum = 0;
-    for (int i = 0; i < tipoAuto.length; i++) {
-        if (tipoAuto[i].equals(tipo)) {
-            tipoNum = i;
-            break;
+    public double precioReparacionVSMotor(ReparacionEntity reparacion) {
+        //obtener el tipo de motor del vehiculo
+        int motorNum = numeroMotor(reparacion);
+
+        //sea una string separada por comas con los tipos de reparacion, obtener cada tipo de reparacion en un arreglo donde cada vez que se encuentre una coma se separa
+        String tipoReparacion = reparacion.getTipoReparacion();
+        String[] tipoReparacionArray = tipoReparacion.split(",");
+
+        int montoTotal = 0;
+        for (String s : tipoReparacionArray) {
+            // si es "" no se hace nada
+            if (s.isEmpty()) {
+                continue;
+            }
+            int tipoReparacionNum = Integer.parseInt(s);
+            montoTotal += preciosMotor[tipoReparacionNum][motorNum];
         }
-    }
-    return tipoNum;
-}
-
-public int precioReparacionVSMotor(ReparacionEntity reparacion) {
-    //obtener el tipo de motor del vehiculo
-    int motorNum = numeroMotor(reparacion);
-
-    //sea una string separada por comas con los tipos de reparacion, obtener cada tipo de reparacion en un arreglo donde cada vez que se encuentre una coma se separa
-    String tipoReparacion = reparacion.getTipoReparacion();
-    String[] tipoReparacionArray = tipoReparacion.split(",");
-
-    int montoTotal = 0;
-    for (String s : tipoReparacionArray) {
-        int tipoReparacionNum = Integer.parseInt(s);
-        montoTotal += preciosMotor[tipoReparacionNum][motorNum];
-    }
-    return montoTotal;
-}
-
-public ArrayList<ReparacionEntity> obtenerReparacionesPorIdVehiculo(String idVehiculo) {
-        return (ArrayList<ReparacionEntity>)  reparacionRepository.findByVehiculoID(idVehiculo);
+        return montoTotal;
     }
 
-public int descuentoCantidadReparaciones(ReparacionEntity reparacion){
 
-    int cantidadReparaciones = obtenerReparacionesPorIdVehiculo(reparacion.getIdVehiculo()).size();
-    //obtener el NUMERO de motor del vehiculo
-    int motorNum = numeroMotor(reparacion);
+    public double descuentoCantidadReparaciones(ReparacionEntity reparacion) {
 
-    return descuentosMotor[cantidadReparaciones][motorNum];
-}
+        int cantidadReparaciones = reparacionRepository.findByVehiculoID(reparacion.getIdVehiculo()).size();
+        //obtener el NUMERO de motor del vehiculo
+        int motorNum = numeroMotor(reparacion);
 
-public int descuentoDiaAtencion(ReparacionEntity reparacion){
-    //obtener la fecha de la reparacion
-    LocalDateTime fechaReparacion = reparacion.getFechaHoraIngreso();
-    //obtener el dia de la semana de la reparacion
-    int diaSemana = fechaReparacion.getDayOfWeek().getValue();
-    int horaIngreso = fechaReparacion.getHour();
-    //si la reparacion se realiza un dia lunes o jueves entre las  09:00 hrs y las 12:00 hrs. se aplica un descuento del 10%
-    if ((diaSemana == 1 || diaSemana == 4) && (horaIngreso >= 9 && horaIngreso <= 12)) {
-        return 10;
+        //si cantidad de reparaciones supera 10 entonces cantidadReparaciones = 9
+        if (cantidadReparaciones >= 10) {
+            cantidadReparaciones = 9;
+        }
+        return descuentosMotor[cantidadReparaciones][motorNum];
     }
-    return 0;
-}
 
-public int descuentoMarca(ReparacionEntity reparacion){
-
-    //obtener la marca del vehiculo
-    String marca = vehiculoService.obtenerPorId(Long.valueOf(reparacion.getIdVehiculo())).getMarca();
-    //verificar si la marca del vehiculo tiene bonos disponibles y aplicar el descuento correspondiente
-    int mes = reparacion.getFechaHoraIngreso().getMonth().getValue();
-    int anio = reparacion.getFechaHoraIngreso().getYear();
-    LocalDateTime fechaReparacion = LocalDateTime.of(anio, mes, 1, 0, 0);
-
-    return marcaService.findByFechaBonoMarca(fechaReparacion.toString(), marca).getDescuento();
-}
-
-public int recargoKilometraje(ReparacionEntity reparacion){
-    //obtener el kilometraje del vehiculo
-    int kilometraje = vehiculoService.obtenerPorId(Long.valueOf(reparacion.getIdVehiculo())).getKilometraje();
-    //si el kilometraje es mayor a 100000 km se aplica un recargo del 10%
-    int tipoAutoNum = numeroTipoVehiculo(reparacion);
-    if (kilometraje <= 5000) {
-        return recargoKilometraje[tipoAutoNum][0];
-    }
-    else if (kilometraje <= 12000) {
-        return recargoKilometraje[tipoAutoNum][1];
-    }
-    else if (kilometraje <= 25000) {
-        return recargoKilometraje[tipoAutoNum][2];
-    }
-    else if (kilometraje <= 40000) {
-        return recargoKilometraje[tipoAutoNum][3];
-    }
-    else {
-        return recargoKilometraje[tipoAutoNum][4];
-    }
-}
-
-public int recargoAntiguedadVehiculo(ReparacionEntity reparacion){
-    //obtener la fecha de fabricacion del vehiculo
-    // Assuming "getAnnoFabricacion()" returns a String representing the year
-    String annoFabricacionStr = vehiculoService.obtenerPorId(Long.valueOf(reparacion.getIdVehiculo())).getAnnoFabricacion();
-    // Parsing the string to an integer
-    int fechaFabricacion = Integer.parseInt(annoFabricacionStr);
-    //obtener la fecha de la reparacion
-    int fechaReparacion = reparacion.getFechaHoraIngreso().toLocalDate().getYear();
-    //obtener el tipo de auto
-    int tipoAutoNum = numeroTipoVehiculo(reparacion);
-    int diferenciaAnios = fechaReparacion - fechaFabricacion;
-    //si el vehiculo tiene mas de 10 años de antiguedad se aplica un recargo del 10%
-    if (diferenciaAnios <= 5) {
-        return recargoAntiguedad[tipoAutoNum][0];
-    }
-    else if (diferenciaAnios <= 10) {
-        return recargoAntiguedad[tipoAutoNum][1];
-    }
-    else if (diferenciaAnios <= 15) {
-        return recargoAntiguedad[tipoAutoNum][2];
-    }
-    else {
-        return recargoAntiguedad[tipoAutoNum][3];
-    }
-}
-
-public int recargoDiasDesdeSalida(ReparacionEntity reparacion){
-    //obtener la fecha de la reparacion
-    LocalDateTime fechaSalida = reparacion.getFechaHoraSalida();
-    LocalDateTime fechaRetiro = reparacion.getFechaHoraRetiro();
-    //obtener la cantidad de dias entre la fecha de salida y la fecha de retiro
-    int diasDiferencia = Period.between(fechaSalida.toLocalDate(), fechaRetiro.toLocalDate()).getDays();
-    //si la cantidad de dias es mayor a 3 se aplica un recargo del 10%
-    if (diasDiferencia <= 0) {
+    public double descuentoDiaAtencion(ReparacionEntity reparacion) {
+        //obtener la fecha de la reparacion
+        LocalDateTime fechaReparacion = reparacion.getFechaHoraIngreso();
+        //obtener el dia de la semana de la reparacion
+        int diaSemana = fechaReparacion.getDayOfWeek().getValue();
+        int horaIngreso = fechaReparacion.getHour();
+        //si la reparacion se realiza un dia lunes o jueves entre las  09:00 hrs y las 12:00 hrs. se aplica un descuento del 10%
+        if ((diaSemana == 1 || diaSemana == 4) && (horaIngreso >= 9 && horaIngreso <= 12)) {
+            return 0.1;
+        }
         return 0;
     }
-    return diasDiferencia*5;
-}
 
-
-public int descuentos(ReparacionEntity reparacion){
-    return descuentoCantidadReparaciones(reparacion) + descuentoDiaAtencion(reparacion);
+    public double descuentoMarca(ReparacionEntity reparacion) {
+        String marca = vehiculoService.obtenerPorId(Long.valueOf(reparacion.getIdVehiculo())).getMarca();
+        int mes = reparacion.getFechaHoraIngreso().getMonth().getValue();
+        int anio = reparacion.getFechaHoraIngreso().getYear();
+        LocalDateTime fechaReparacion = LocalDateTime.of(anio, mes, 1, 0, 0);
+        if (marcaService.findByFechaBonoMarca(fechaReparacion, marca) == null) {
+            return 0;
+        }
+        return marcaService.findByFechaBonoMarca(fechaReparacion, marca).getDescuento();
+    }
+    public double recargoKilometraje(ReparacionEntity reparacion) {
+        //obtener el kilometraje del vehiculo
+        int kilometraje = vehiculoService.obtenerPorId(Long.valueOf(reparacion.getIdVehiculo())).getKilometraje();
+        //si el kilometraje es mayor a 100000 km se aplica un recargo del 10%
+        int tipoAutoNum = numeroTipoVehiculo(reparacion);
+        //print in console each option
+        System.out.println("tipoAutoNum: " + tipoAutoNum);
+        if (kilometraje <= 5000) {
+            return recargoKilometraje[4][tipoAutoNum];
+        } else if (kilometraje <= 12000) {
+            return recargoKilometraje[4][tipoAutoNum];
+        } else if (kilometraje <= 25000) {
+            return recargoKilometraje[4][tipoAutoNum];
+        } else if (kilometraje <= 40000) {
+            return recargoKilometraje[4][tipoAutoNum];
+        } else {
+            return recargoKilometraje[4][tipoAutoNum];
+        }
     }
 
-public int recargos(ReparacionEntity reparacion){
-    if (reparacion.getFechaHoraSalida() == null || reparacion.getFechaHoraRetiro() == null) {
-        return recargoKilometraje(reparacion) + recargoAntiguedadVehiculo(reparacion);
-    }
-    return recargoKilometraje(reparacion) + recargoAntiguedadVehiculo(reparacion) + recargoDiasDesdeSalida(reparacion);
+    public double recargoAntiguedadVehiculo(ReparacionEntity reparacion) {
+        //obtener la fecha de fabricacion del vehiculo
+        // Assuming "getAnnoFabricacion()" returns a String representing the year
+        String annoFabricacionStr = vehiculoService.obtenerPorId(Long.valueOf(reparacion.getIdVehiculo())).getAnnoFabricacion();
+        // Parsing the string to an integer
+        int fechaFabricacion = Integer.parseInt(annoFabricacionStr);
+        //obtener la fecha de la reparacion
+        int fechaReparacion = reparacion.getFechaHoraIngreso().toLocalDate().getYear();
+        //obtener el tipo de auto
+        int tipoAutoNum = numeroTipoVehiculo(reparacion);
+        int diferenciaAnios = fechaReparacion - fechaFabricacion;
+        //si el vehiculo tiene mas de 10 años de antiguedad se aplica un recargo del 10%
+        if (diferenciaAnios <= 5) {
+            return recargoAntiguedad[0][tipoAutoNum];
+        } else if (diferenciaAnios <= 10) {
+            return recargoAntiguedad[1][tipoAutoNum];
+        } else if (diferenciaAnios <= 15) {
+            return recargoAntiguedad[2][tipoAutoNum];
+        } else {
+            return recargoAntiguedad[3][tipoAutoNum];
+        }
     }
 
-public int totalPagar(ReparacionEntity reparacion){
-    int monto = precioReparacionVSMotor(reparacion);
-    return (monto - monto*descuentos(reparacion) + monto*recargos(reparacion) + descuentoMarca(reparacion));
+    public double recargoDiasDesdeSalida(ReparacionEntity reparacion) {
+        //obtener la fecha de la reparacion
+        LocalDateTime fechaSalida = reparacion.getFechaHoraSalida();
+        LocalDateTime fechaRetiro = reparacion.getFechaHoraRetiro();
+        //obtener la cantidad de dias entre la fecha de salida y la fecha de retiro
+        int diasDiferencia = Period.between(fechaSalida.toLocalDate(), fechaRetiro.toLocalDate()).getDays();
+        //si la cantidad de dias es mayor a 3 se aplica un recargo del 10%
+        if (diasDiferencia <= 0) {
+            return 0;
+        }
+        return (diasDiferencia * 5) * 0.01;
+    }
+
+
+    public double descuentos(ReparacionEntity reparacion) {
+        return descuentoCantidadReparaciones(reparacion) + descuentoDiaAtencion(reparacion);
+    }
+
+    public double recargos(ReparacionEntity reparacion) {
+        if (reparacion.getFechaHoraSalida() == null || reparacion.getFechaHoraRetiro() == null) {
+            return recargoKilometraje(reparacion) + recargoAntiguedadVehiculo(reparacion);
+        }
+
+        return recargoKilometraje(reparacion) + recargoAntiguedadVehiculo(reparacion) + recargoDiasDesdeSalida(reparacion);
+    }
+
+    public int totalPagar(ReparacionEntity reparacion) {
+        double monto = precioReparacionVSMotor(reparacion);
+        double descuento = descuentos(reparacion);
+        double recargo = recargos(reparacion);
+        double descuentoMarca = descuentoMarca(reparacion);
+        //print each value in the console
+        System.out.println("monto: " + monto);
+        System.out.println("descuento: " + descuento);
+        System.out.println("recargo: " + recargo);
+        System.out.println("descuentoMarca: " + descuentoMarca);
+
+        // Round up each calculated value to ensure it doesn't exceed the bounds of an int
+        double total = Math.ceil(monto - (monto * descuento) + (monto * recargo) - descuentoMarca);
+
+        // Convert the total to an int
+        return (int) total;
     }
 }

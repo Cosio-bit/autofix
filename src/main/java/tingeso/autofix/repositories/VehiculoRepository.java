@@ -20,25 +20,20 @@ public interface VehiculoRepository extends JpaRepository<VehiculoEntity, Long> 
     Optional<VehiculoEntity> findByPatente(@Param("patente") String patente);
 
     @Query(value = "SELECT * FROM vehiculos WHERE marca = :marca", nativeQuery = true)
-    Optional<VehiculoEntity> findByMarca(@Param("marca") String marca);
-
-    @Query(value = "SELECT * FROM vehiculos WHERE modelo = :modelo", nativeQuery = true)
-    Optional<VehiculoEntity> findByModelo(@Param("modelo") String modelo);
+    List<VehiculoEntity> findByMarca(@Param("marca") String marca);
 
     @Query(value = "SELECT * FROM vehiculos WHERE anno_fabricacion = :annoFabricacion", nativeQuery = true)
     Optional<VehiculoEntity> findByAnnoFabricacion(@Param("annoFabricacion") String annoFabricacion);
 
     @Query(value = "SELECT * FROM vehiculos WHERE tipo_vehiculo = :tipoVehiculo", nativeQuery = true)
-    Optional<VehiculoEntity> findByTipoVehiculo(@Param("tipoVehiculo") String tipoVehiculo);
+    List<VehiculoEntity> findByTipoVehiculo(@Param("tipoVehiculo") String tipoVehiculo);
 
     @Query(value = "SELECT * FROM vehiculos WHERE tipo_motor = :tipoMotor", nativeQuery = true)
     Optional<VehiculoEntity> findByTipoMotor(@Param("tipoMotor") String tipoMotor);
 
     @Query(value = "SELECT * FROM vehiculos WHERE nro_asientos = :nroAsientos", nativeQuery = true)
-    Optional<VehiculoEntity> findByNroAsientos(@Param("nroAsientos") int nroAsientos);
+    List<VehiculoEntity> findByNroAsientos(@Param("nroAsientos") int nroAsientos);
 
-    @Query(value = "SELECT * FROM vehiculos WHERE estado = :estado", nativeQuery = true)
-    Optional<VehiculoEntity> findByEstado(@Param("estado") String estado);
 
     @Query(value = "SELECT * FROM vehiculos WHERE kilometraje = :kilometraje", nativeQuery = true)
     Optional<VehiculoEntity> findByKilometraje(@Param("kilometraje") int kilometraje);

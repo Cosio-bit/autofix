@@ -56,22 +56,22 @@ public class MarcaController {
             var isDeleted = marcaService.deleteMarca(id);
             return ResponseEntity.noContent().build();
         }
-
-        @PostMapping("/uploadFile")
-        public String handleFileUpload(@RequestParam("file") MultipartFile file) {
-            if (file.isEmpty()) {
-                return "Please select a file to upload";
-            }
-            try {
-                //get the name of the file
-                String fileName = file.getOriginalFilename();
-                marcaService.processFile(file, fileName);
-                return "File uploaded successfully!";
-            } catch (IOException e) {
-                e.printStackTrace();
-                return "Failed to upload file";
-            }
-        }
-    
+//
+//        @PostMapping("/uploadFile")
+//        public String handleFileUpload(@RequestParam("file") MultipartFile file) {
+//            if (file.isEmpty()) {
+//                return "Please select a file to upload";
+//            }
+//            try {
+//                //get the name of the file
+//                String fileName = file.getOriginalFilename();
+//                marcaService.processFile(file, fileName);
+//                return "File uploaded successfully!";
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                return "Failed to upload file";
+//            }
+//        }
+//
     
 }

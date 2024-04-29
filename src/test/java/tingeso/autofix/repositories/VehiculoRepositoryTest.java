@@ -11,10 +11,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.Collections;
 import java.util.Optional;
-
-
 
 @DataJpaTest
 @ActiveProfiles({"test"})
@@ -65,7 +65,7 @@ class VehiculoRepositoryTest {
         // Crear el segundo objeto VehiculoEntity para probar
         VehiculoEntity vehiculo2 = new VehiculoEntity();
         vehiculo2.setPatente("ABC123");
-        vehiculo2.setMarca("Toyota");
+        vehiculo2.setMarca("Chevrolet");
         vehiculo2.setModelo("Corolla");
         vehiculo2.setAnnoFabricacion("2020");
         vehiculo2.setTipoVehiculo("Sedan");
@@ -79,12 +79,10 @@ class VehiculoRepositoryTest {
         entityManager.flush();
 
         // when
-        Optional<VehiculoEntity> foundVehiculos = vehiculoRepository.findByMarca("Chevrolet");
-        // cast optional to list
-        List<VehiculoEntity> vehiculos = Collections.singletonList(foundVehiculos.get());
+        List<VehiculoEntity> foundVehiculos = vehiculoRepository.findByMarca("Chevrolet");
 
         // then
-        assertThat(vehiculos).hasSize(2).extracting(VehiculoEntity::getMarca).containsOnly("Chevrolet");
+        assertThat(foundVehiculos).hasSize(2).extracting(VehiculoEntity::getMarca).containsOnly("Chevrolet");
     }
 
     @Test
@@ -156,11 +154,10 @@ class VehiculoRepositoryTest {
         entityManager.flush();
 
        // when
-       Optional<VehiculoEntity> foundVehiculos = vehiculoRepository.findByTipoVehiculo("Sedan");
-       List<VehiculoEntity> vehiculos = Collections.singletonList(foundVehiculos.get());
+       List<VehiculoEntity> foundVehiculos = vehiculoRepository.findByTipoVehiculo("Sedan");
 
         // then
-        assertThat(vehiculos).hasSize(2).extracting(VehiculoEntity::getTipoVehiculo).containsOnly("Sedan");
+        assertThat(foundVehiculos).hasSize(2).extracting(VehiculoEntity::getTipoVehiculo).containsOnly("Sedan");
     }
 
     @Test
@@ -201,6 +198,7 @@ class VehiculoRepositoryTest {
         assertThat(vehiculos).hasSize(1).extracting(VehiculoEntity::getTipoMotor).containsOnly("Híbrido");
     }
 
+
     @Test
     public void whenFindByNroAsientos_thenReturnVehiculos() {
         // given
@@ -214,7 +212,7 @@ class VehiculoRepositoryTest {
         vehiculo1.setNroAsientos(5);
         vehiculo1.setKilometraje(20000);
         vehiculoRepository.save(vehiculo1);
-
+    
         // Crear el segundo objeto VehiculoEntity para probar
         VehiculoEntity vehiculo2 = new VehiculoEntity();
         vehiculo2.setPatente("ABC123");
@@ -226,18 +224,19 @@ class VehiculoRepositoryTest {
         vehiculo2.setNroAsientos(5);
         vehiculo2.setKilometraje(15000);
         vehiculoRepository.save(vehiculo2);
-
-        entityManager.persist(vehiculo1);
-        entityManager.persist(vehiculo2);
+    
         entityManager.flush();
-
-       // when
-       Optional<VehiculoEntity> foundVehiculos = vehiculoRepository.findByNroAsientos(5);
-       List<VehiculoEntity> vehiculos = Collections.singletonList(foundVehiculos.get());
-
+    
+        // when
+        List<VehiculoEntity> foundVehiculos = vehiculoRepository.findByNroAsientos(5);
+    
         // then
-        assertThat(vehiculos).hasSize(2).extracting(VehiculoEntity::getNroAsientos).containsOnly(5);
+        assertThat(foundVehiculos.size()).isEqualTo(2); // Check if 2 vehicles with 5 seats are found
+        assertThat(foundVehiculos.get(0).getNroAsientos()).isEqualTo(5); // Check if the first vehicle has 5 seats
+        assertThat(foundVehiculos.get(1).getNroAsientos()).isEqualTo(5); // Check if the second vehicle has 5 seats
     }
+    
+
 
     @Test
     public void whenFindByKilometraje_thenReturnVehiculos() {
