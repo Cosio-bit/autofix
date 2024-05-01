@@ -1,6 +1,8 @@
 // Source code is decompiled from a .class file using FernFlower decompiler.
 package tingeso.autofix.services;
 
+import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import tingeso.autofix.entities.ReparacionEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -20,82 +23,71 @@ class ReparacionServiceTest {
    private ReparacionService reparacionService;
    ReparacionEntity reparacion = new ReparacionEntity();
 
+   @BeforeEach
+   void setUp() {
+      reparacion.setId(2L);
+       reparacion.setFechaHoraIngreso(LocalDateTime.now());
+       reparacion.setFechaHoraSalida(null);
+       reparacion.setMontoTotal(null);
+       reparacion.setTipoReparacion("1");
+       reparacion.setIdVehiculo("2");
+   }
+
    @Test
    void whenGuardarReparacion_thenReparacionGuardado() {
-        this.reparacion.setFechaHoraIngreso(LocalDateTime.now());
-        this.reparacion.setFechaHoraSalida(null);
-        this.reparacion.setMontoTotal(null);
-        this.reparacion.setTipoReparacion("1");
-        this.reparacion.setIdVehiculo("1");
-
       ReparacionEntity reparacionEntity = this.reparacionService.guardarReparacion(reparacion);
       assertThat(reparacionEntity).isEqualTo(this.reparacion);
    }
 
-   /*
-
-   @Test
-   void whenGuardarReparacionAndGetPatente_thenCorrect() {
-      this.reparacion.setPatente("GHI789");
-      this.reparacion.setMarca("Chevrolet");
-      this.reparacion.setModelo("Cruze");
-      this.reparacion.setAnnoFabricacion("2019");
-      this.reparacion.setTipoReparacion("Sedan");
-      this.reparacion.setTipoMotor("Gasolina");
-      this.reparacion.setNroAsientos(5);
-      this.reparacion.setKilometraje(20000);
-      this.reparacionService.guardarReparacion(reparacion);
-      String patente = this.reparacionService.obtenerPorPatente("GHI789").get().getPatente();
-      assertThat(patente).isEqualTo("GHI789");
-   }
-
    @Test
    void whenGuardarReparacionAndGetId_thenCorrect() {
-      this.reparacion.setPatente("GHI789");
-      this.reparacion.setMarca("Chevrolet");
-      this.reparacion.setModelo("Cruze");
-      this.reparacion.setAnnoFabricacion("2019");
-      this.reparacion.setTipoReparacion("Sedan");
-      this.reparacion.setTipoMotor("Gasolina");
-      this.reparacion.setNroAsientos(5);
-      this.reparacion.setKilometraje(20000);
-      this.reparacionService.guardarReparacion(reparacion);
-      Long id = this.reparacionService.obtenerPorId(1L).getId();
-      assertThat(id).isEqualTo(1L);
+      Long id = this.reparacionService.findById(2L).getId();
+      assertThat(id).isEqualTo(2L);
    }
 
    @Test
-   void whenGuardarReparacion_thenObtenerReparacions() {
-      this.reparacion.setPatente("GHI789");
-      this.reparacion.setMarca("Chevrolet");
-      this.reparacion.setModelo("Cruze");
-      this.reparacion.setAnnoFabricacion("2019");
-      this.reparacion.setTipoReparacion("Sedan");
-      this.reparacion.setTipoMotor("Gasolina");
-      this.reparacion.setNroAsientos(5);
-      this.reparacion.setKilometraje(20000);
-      this.reparacionService.guardarReparacion(reparacion);
-
-      ReparacionEntity reparacion1 = this.reparacionService.obtenerReparacions().get(4);
-      assertThat(reparacion).isEqualTo(reparacion1);
+   void whenGuardarReparaciones_thenObtenerReparaciones() {
+      ReparacionEntity reparacionEntity = this.reparacionService.guardarReparacion(reparacion);
+      ArrayList<ReparacionEntity> reparaciones = this.reparacionService.obtenerReparaciones();
+      assertThat(reparaciones.size()).isEqualTo(1);
    }
 
    @Test
-   void whenGuardarReparacionAndUpdated_thenCorrect() {
-      this.reparacion.setPatente("GHI789");
-      this.reparacion.setMarca("Chevrolet");
-      this.reparacion.setModelo("Cruze");
-      this.reparacion.setAnnoFabricacion("2019");
-      this.reparacion.setTipoReparacion("Sedan");
-      this.reparacion.setTipoMotor("Gasolina");
-      this.reparacion.setNroAsientos(5);
-      this.reparacion.setKilometraje(20000);
-      this.reparacionService.guardarReparacion(reparacion);
+   void whenGuardarReparacion_thenObtenerReparacionesByVehiculo() {
+       ReparacionEntity reparacionEntity = this.reparacionService.guardarReparacion(reparacion);
+      ReparacionEntity reparacion1 = this.reparacionService.obtenerReparacionesPorIdVehiculo("2").get(0);
+      assertThat(reparacion1.getFechaHoraIngreso()).isEqualToIgnoringHours(reparacion.getFechaHoraIngreso());
+      assertThat(reparacion1.getTipoReparacion()).isEqualTo(reparacion.getTipoReparacion());
+      assertThat(reparacion1.getIdVehiculo()).isEqualTo(reparacion.getIdVehiculo());
+      assertThat(reparacion1.getId()).isEqualTo(reparacion.getId());
+   }
 
-      ReparacionEntity reparacion2 = this.reparacionService.obtenerPorPatente("GHI789").get();
-      reparacion2.setPatente("GHI788");
-      this.reparacionService.updateReparacion(reparacion2);
-      assertThat(reparacion2.getPatente()).isEqualTo("GHI788");
-   }*/
+   @Test
+   void whenGuardarReparacion_thenUpdateReparacion() {
+      ReparacionEntity reparacionEntity = this.reparacionService.guardarReparacion(reparacion);
+      reparacion.setFechaHoraSalida(LocalDateTime.now());
+      ReparacionEntity reparacion1 = this.reparacionService.updateReparacion(reparacion);
+      assertThat(reparacion1.getFechaHoraSalida()).isEqualToIgnoringHours(reparacion.getFechaHoraSalida());
+   }
+
+   @Test
+   void whenGuardarReparacion_thenDeleteReparacion() {
+      ReparacionEntity reparacionEntity = this.reparacionService.guardarReparacion(reparacion);
+      try {
+         this.reparacionService.deleteReparacion(1L);
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+      assertThat(this.reparacionService.obtenerReparaciones().size()).isEqualTo(1);
+   }
+
+   @Test
+   void whenGuardarReparacion_thenUpdateMontoTotal() {
+      ReparacionEntity reparacionEntity = this.reparacionService.guardarReparacion(reparacion);
+      ReparacionEntity reparacion1 = this.reparacionService.updateMontoTotal(reparacion);
+      assertThat(reparacion1.getMontoTotal()).isEqualTo(99000);
+   }
+
+
 
 }

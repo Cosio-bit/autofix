@@ -21,12 +21,9 @@ public class VehiculoController {
     @GetMapping("/vehiculo/{id}")
     public Optional<VehiculoEntity> mostrarVehiculo(@PathVariable Long id) {
         Optional<VehiculoEntity> vehiculo = Optional.ofNullable(vehiculoService.obtenerPorId(id));
-        if (vehiculo.isPresent()) {
             VehiculoEntity vehiculoEntity = vehiculo.get();
             return Optional.of(vehiculoEntity);
         }
-        return Optional.empty();
-    }
 
     @GetMapping("/vehiculo")
     public VehiculoEntity VehiculoFormvehiculo() {

@@ -42,36 +42,40 @@ class PagoServiceTest {
     ReparacionEntity reparacion = new ReparacionEntity();
     MarcaEntity marca = new MarcaEntity();
 
-    @BeforeEach
-    void setUp() {
-        this.vehiculo.setPatente("GHI789");
-        this.vehiculo.setMarca("Chevrolet");
-        this.vehiculo.setModelo("Cruze");
-        this.vehiculo.setAnnoFabricacion("1980");
-        this.vehiculo.setTipoVehiculo("Sedan");
-        this.vehiculo.setTipoMotor("Gasolina");
-        this.vehiculo.setNroAsientos(5);
-        this.vehiculo.setKilometraje(200000);
-        this.vehiculoService.guardarVehiculo(vehiculo);
+      @BeforeEach
+      void setUp() {
+          vehiculo.setPatente("GHI789");
+          vehiculo.setMarca("Chevrolet");
+          vehiculo.setModelo("Cruze");
+          vehiculo.setAnnoFabricacion("1980");
+          vehiculo.setTipoVehiculo("Sedan");
+          vehiculo.setTipoMotor("Gasolina");
+          vehiculo.setNroAsientos(5);
+          vehiculo.setKilometraje(20000);
+
+         reparacion.setFechaHoraIngreso(LocalDateTime.now());
+         reparacion.setFechaHoraSalida(LocalDateTime.now().plusDays(1));
+         reparacion.setFechaHoraRetiro(LocalDateTime.now().plusDays(3));
+         reparacion.setMontoTotal(null);
+         reparacion.setTipoReparacion(",0,1");
+         reparacion.setIdVehiculo("1");
+
+      }
 
 
-        this.reparacion.setFechaHoraIngreso(LocalDateTime.now());
-        this.reparacion.setFechaHoraSalida(LocalDateTime.now().plusDays(1));
-        this.reparacion.setFechaHoraRetiro(LocalDateTime.now().plusDays(3));
-        this.reparacion.setMontoTotal(null);
-        this.reparacion.setTipoReparacion(",0,1");
-        this.reparacion.setIdVehiculo("1");
-        this.reparacionRepository.save(reparacion);
-    }
 
     @Test
     void whenCalcularMontoTotal_thenMontoTotal() {
+      this.vehiculoService.guardarVehiculo(vehiculo);
+      this.reparacionRepository.save(reparacion);
         double pago = pagoService.precioReparacionVSMotor(reparacion);
         assertThat(pago).isEqualTo(250000);
     }
 
     @Test
     void whenCantidadReparaciones_thenDescuento() {
+          vehiculoService.updateVehiculo(vehiculo);
+        this.reparacionRepository.save(reparacion);
         double descuento = pagoService.descuentoCantidadReparaciones(reparacion);
         assertThat(descuento).isEqualTo(0.05);
     }
@@ -115,7 +119,7 @@ class PagoServiceTest {
     @Test
     void whenDescuentos_thenDescuentos() {
         double descuento = pagoService.descuentos(reparacion);
-        assertThat(descuento).isEqualTo(0.2);
+        assertThat(descuento).isEqualTo(0.1);
     }
 
     @Test
@@ -127,7 +131,7 @@ class PagoServiceTest {
     @Test
     void whenTotalPagar_thenTotalPagar() {
         double total = pagoService.totalPagar(reparacion);
-        assertThat(total).isEqualTo(242500);
+        assertThat(total).isEqualTo(267500);
     }
 
     @Test

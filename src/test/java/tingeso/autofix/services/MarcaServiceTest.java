@@ -20,6 +20,18 @@ class MarcaServiceTest {
    private MarcaService marcaService;
    MarcaEntity marca = new MarcaEntity();
 
+    @Test
+    void whenGuardarMarca_thenObtenerMarcas() {
+        this.marca.setCantidadBonos(3);
+        this.marca.setDescuento(70000);
+        this.marca.setFechaBono(LocalDateTime.now());
+        this.marca.setNombre("Toyota");
+        this.marcaService.guardarMarca(marca);
+
+        MarcaEntity marca1 = this.marcaService.obtenerMarcas().get(2);
+        assertThat(marca).isEqualTo(marca1);
+    }
+
    @Test
    void whenGuardarMarca_thenMarcaGuardado() {
         this.marca.setCantidadBonos(3);
@@ -52,17 +64,6 @@ class MarcaServiceTest {
       assertThat(id).isEqualTo(1L);
    }
 
-   @Test
-   void whenGuardarMarca_thenObtenerMarcas() {
-       this.marca.setCantidadBonos(3);
-       this.marca.setDescuento(70000);
-       this.marca.setFechaBono(LocalDateTime.now());
-       this.marca.setNombre("Toyota");
-      this.marcaService.guardarMarca(marca);
-
-      MarcaEntity marca1 = this.marcaService.obtenerMarcas().get(1);
-      assertThat(marca).isEqualTo(marca1);
-   }
 
    @Test
    void whenGuardarMarcaAndUpdated_thenCorrect() {

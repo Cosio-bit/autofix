@@ -1,4 +1,5 @@
 package tingeso.autofix.services;
+import tingeso.autofix.entities.MarcaEntity;
 import tingeso.autofix.entities.ReparacionEntity;
 
 import java.time.LocalDateTime;
@@ -8,12 +9,13 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tingeso.autofix.repositories.ReparacionRepository;
+import tingeso.autofix.repositories.VehiculoRepository;
 
 
 @Service
 public class PagoService {
     @Autowired
-    VehiculoService vehiculoService;
+    VehiculoRepository vehiculoRepository;
 
     @Autowired
     ReparacionRepository reparacionRepository;
@@ -77,8 +79,10 @@ public class PagoService {
 
 
     public int numeroMotor(ReparacionEntity reparacion) {
+        System.out.println("id: " + reparacion.getIdVehiculo());
         //obtener el tipo de motor del vehiculo
-        String motor = vehiculoService.obtenerPorId(Long.valueOf(reparacion.getIdVehiculo())).getTipoMotor();
+        String motor = vehiculoRepository.findById(Long.valueOf(reparacion.getIdVehiculo())).get().getTipoMotor();
+        System.out.println("rep: " + motor);
         int motorNum = 0;
         for (int i = 0; i < motores.length; i++) {
             if (motores[i].equals(motor)) {
@@ -86,13 +90,15 @@ public class PagoService {
                 break;
             }
         }
+        System.out.println("motnum: " + motorNum);
+
         return motorNum;
     }
 
 
     public int numeroTipoVehiculo(ReparacionEntity reparacion) {
         //obtener el tipo de auto del vehiculo
-        String tipo = vehiculoService.obtenerPorId(Long.valueOf(reparacion.getIdVehiculo())).getTipoVehiculo();
+        String tipo = vehiculoRepository.findById(Long.valueOf(reparacion.getIdVehiculo())).get().getTipoVehiculo();
         int tipoNum = 0;
         for (int i = 0; i < tipoAuto.length; i++) {
             if (tipoAuto[i].equals(tipo)) {
@@ -127,13 +133,16 @@ public class PagoService {
     public double descuentoCantidadReparaciones(ReparacionEntity reparacion) {
 
         int cantidadReparaciones = reparacionRepository.findByVehiculoID(reparacion.getIdVehiculo()).size();
-        //obtener el NUMERO de motor del vehiculo
-        int motorNum = numeroMotor(reparacion);
-
+        //print in console the cantidadReparaciones
         //si cantidad de reparaciones supera 10 entonces cantidadReparaciones = 9
         if (cantidadReparaciones >= 10) {
             cantidadReparaciones = 9;
         }
+        System.out.println("cantidadReparaciones: " + cantidadReparaciones);
+        //obtener el NUMERO de motor del vehiculo
+        int motorNum = numeroMotor(reparacion);
+        System.out.println("motornum: " + motorNum);
+
         return descuentosMotor[cantidadReparaciones][motorNum];
     }
 
@@ -151,18 +160,21 @@ public class PagoService {
     }
 
     public double descuentoMarca(ReparacionEntity reparacion) {
-        String marca = vehiculoService.obtenerPorId(Long.valueOf(reparacion.getIdVehiculo())).getMarca();
+        String marca = vehiculoRepository.findById(Long.valueOf(reparacion.getIdVehiculo())).get().getMarca();
         int mes = reparacion.getFechaHoraIngreso().getMonth().getValue();
         int anio = reparacion.getFechaHoraIngreso().getYear();
         LocalDateTime fechaReparacion = LocalDateTime.of(anio, mes, 1, 0, 0);
-        if (marcaService.findByFechaBonoMarca(fechaReparacion, marca) == null) {
+
+        MarcaEntity marcaEntity = marcaService.findByFechaBonoMarca(fechaReparacion, marca);
+        if (marcaEntity == null) {
             return 0;
         }
-        return marcaService.findByFechaBonoMarca(fechaReparacion, marca).getDescuento();
+        return marcaEntity.getDescuento();
     }
+
     public double recargoKilometraje(ReparacionEntity reparacion) {
         //obtener el kilometraje del vehiculo
-        int kilometraje = vehiculoService.obtenerPorId(Long.valueOf(reparacion.getIdVehiculo())).getKilometraje();
+        int kilometraje = vehiculoRepository.findById(Long.valueOf(reparacion.getIdVehiculo())).get().getKilometraje();
         //si el kilometraje es mayor a 100000 km se aplica un recargo del 10%
         int tipoAutoNum = numeroTipoVehiculo(reparacion);
         //print in console each option
@@ -183,7 +195,7 @@ public class PagoService {
     public double recargoAntiguedadVehiculo(ReparacionEntity reparacion) {
         //obtener la fecha de fabricacion del vehiculo
         // Assuming "getAnnoFabricacion()" returns a String representing the year
-        String annoFabricacionStr = vehiculoService.obtenerPorId(Long.valueOf(reparacion.getIdVehiculo())).getAnnoFabricacion();
+        String annoFabricacionStr = vehiculoRepository.findById(Long.valueOf(reparacion.getIdVehiculo())).get().getAnnoFabricacion();
         // Parsing the string to an integer
         int fechaFabricacion = Integer.parseInt(annoFabricacionStr);
         //obtener la fecha de la reparacion
@@ -234,6 +246,8 @@ public class PagoService {
         double descuento = descuentos(reparacion);
         double recargo = recargos(reparacion);
         double descuentoMarca = descuentoMarca(reparacion);
+
+
         //print each value in the console
         System.out.println("monto: " + monto);
         System.out.println("descuento: " + descuento);

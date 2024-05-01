@@ -31,13 +31,9 @@ public class ReparacionController {
     @GetMapping("/reparacion/{id}")
     public Optional<ReparacionEntity> mostrarReparacion(@PathVariable Long id) {
         Optional<ReparacionEntity> reparacion = Optional.ofNullable(reparacionService.findById(id));
-        if (reparacion.isPresent()) {
             ReparacionEntity reparacionEntity = reparacion.get();
             return Optional.of(reparacionEntity);
         }
-        return Optional.empty();
-    }
-
     @PostMapping("/crearReparacion")
     public ReparacionEntity nuevaReparacion(
             @RequestBody ReparacionEntity reparacion) {

@@ -1,5 +1,6 @@
 package tingeso.autofix.controllers;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -38,10 +39,11 @@ public class ReparacionControllerTest {
     private VehiculoService vehiculoService;
 
     //create a vehiculo for each test
-    VehiculoEntity vehiculo = new VehiculoEntity();
+
     
     @BeforeEach
     void setUp() {
+        VehiculoEntity vehiculo = new VehiculoEntity();
         vehiculo.setPatente("GHI789");
         vehiculo.setMarca("Chevrolet");
         vehiculo.setModelo("Cruze");
@@ -50,16 +52,18 @@ public class ReparacionControllerTest {
         vehiculo.setTipoMotor("Gasolina");
         vehiculo.setNroAsientos(5);
         vehiculo.setKilometraje(20000);
+
+        vehiculoService.guardarVehiculo(vehiculo);
     }
 
 
     @Test
     public void listReparacions_ShouldReturnReparacions() throws Exception {
 
-
         ReparacionEntity reparacion1 = new ReparacionEntity();
         reparacion1.setFechaHoraIngreso(LocalDateTime.now());
         reparacion1.setFechaHoraSalida(null);
+        reparacion1.setFechaHoraRetiro(null);
         reparacion1.setMontoTotal(null);
         reparacion1.setTipoReparacion("1");
         reparacion1.setIdVehiculo("1");
@@ -68,6 +72,7 @@ public class ReparacionControllerTest {
         ReparacionEntity reparacion2 = new ReparacionEntity();
         reparacion2.setFechaHoraIngreso(LocalDateTime.now());
         reparacion2.setFechaHoraSalida(null);
+        reparacion2.setFechaHoraRetiro(null);
         reparacion2.setMontoTotal(null);
         reparacion2.setTipoReparacion("2");
         reparacion2.setIdVehiculo("1");
@@ -84,112 +89,106 @@ public class ReparacionControllerTest {
                 .andExpect(jsonPath("$[0].tipoReparacion", is("1")))
                 .andExpect(jsonPath("$[1].tipoReparacion", is("2")));
     }
-/* 
+
     @Test
     public void getReparacionById_ShouldReturnReparacion() throws Exception {
         ReparacionEntity reparacion = new ReparacionEntity();
-        reparacion.setPatente("GHI789");
-        reparacion.setMarca("Chevrolet");
-        reparacion.setModelo("Cruze");
-        reparacion.setAnnoFabricacion("2019");
-        reparacion.setTipoReparacion("Sedan");
-        reparacion.setTipoMotor("Gasolina");
-        reparacion.setNroAsientos(5);
-        reparacion.setKilometraje(20000);
+        reparacion.setId(1L);
+        reparacion.setFechaHoraIngreso(LocalDateTime.now());
+        reparacion.setFechaHoraSalida(null);
+        reparacion.setFechaHoraRetiro(null);
+        reparacion.setMontoTotal(null);
+        reparacion.setTipoReparacion("1");
+        reparacion.setIdVehiculo("1");
 
-        given(reparacionService.obtenerPorId(1L)).willReturn(reparacion);
+        reparacionService.guardarReparacion(reparacion);
 
-        mockMvc.perform(get("/api/v1/reparacions/reparacion/{id}", 1L))
+        given(reparacionService.findById(1L)).willReturn(reparacion);
+
+        mockMvc.perform(get("/api/v1/reparaciones/reparacion/{id}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.patente", is("GHI789")));
+                .andExpect(jsonPath("$.id", is(1)));
     }
 
     @Test
     public void saveReparacion_ShouldReturnSavedReparacion() throws Exception {
-        ReparacionEntity savedReparacion = new ReparacionEntity();
-        savedReparacion.setPatente("GHI789");
-        savedReparacion.setMarca("Chevrolet");
-        savedReparacion.setModelo("Cruze");
-        savedReparacion.setAnnoFabricacion("2019");
-        savedReparacion.setTipoReparacion("Sedan");
-        savedReparacion.setTipoMotor("Gasolina");
-        savedReparacion.setNroAsientos(5);
-        savedReparacion.setKilometraje(20000);
+        ReparacionEntity reparacion = new ReparacionEntity();
+        reparacion.setId(1L);   
+        reparacion.setFechaHoraIngreso(LocalDateTime.now());
+        reparacion.setFechaHoraSalida(null);
+        reparacion.setFechaHoraRetiro(null);
+        reparacion.setMontoTotal(null);
+        reparacion.setTipoReparacion("1");
+        reparacion.setIdVehiculo("1");
 
-        given(reparacionService.guardarReparacion(Mockito.any(ReparacionEntity.class))).willReturn(savedReparacion);
+        given(reparacionService.guardarReparacion(Mockito.any(ReparacionEntity.class))).willReturn(reparacion);
 
         String reparacionJson = """
             {
-                "patente": "GHI789",
-                "marca": "Chevrolet",
-                "modelo": "Cruze",
-                "annoFabricacion": "2019",
-                "tipoReparacion": "Sedan",
-                "tipoMotor": "Gasolina",
-                "nroAsientos": 5,
-                "kilometraje": 20000
+                "Id": "1",
+                "FechaHoraIngreso": "2021-06-01T00:00:00",
+                "FechaHoraSalida": null,
+                "FechaHoraRetiro": null,
+                "MontoTotal": null,
+                "TipoReparacion": "1",
+                "IdVehiculo": "1"
             }
             """;
 
-        mockMvc.perform(post("/api/v1/reparacions/reparacion")
+        mockMvc.perform(post("/api/v1/reparaciones/crearReparacion")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(reparacionJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.patente", is("GHI789")));
+                .andExpect(jsonPath("$.id", is(1)));
     }
 
     @Test
     public void updateReparacion_ShouldReturnUpdatedReparacion() throws Exception {
         ReparacionEntity updatedReparacion = new ReparacionEntity();
-        updatedReparacion.setPatente("GHI789");
-        updatedReparacion.setMarca("Chevrolet");
-        updatedReparacion.setModelo("Cruze");
-        updatedReparacion.setAnnoFabricacion("2019");
-        updatedReparacion.setTipoReparacion("Sedan");
-        updatedReparacion.setTipoMotor("Gasolina");
-        updatedReparacion.setNroAsientos(5);
-        updatedReparacion.setKilometraje(20000);
+        updatedReparacion.setId(1L);
+        updatedReparacion.setFechaHoraIngreso(LocalDateTime.now());
+        updatedReparacion.setFechaHoraSalida(null);
+        updatedReparacion.setFechaHoraRetiro(null);
+        updatedReparacion.setMontoTotal(null);
+        updatedReparacion.setTipoReparacion("1");
+        updatedReparacion.setIdVehiculo("1");
 
         given(reparacionService.updateReparacion(Mockito.any(ReparacionEntity.class))).willReturn(updatedReparacion);
 
         String reparacionJson = """
             {
-                "patente": "GHI789",
-                "marca": "Chevrolet",
-                "modelo": "Cruze",
-                "annoFabricacion": "2019",
-                "tipoReparacion": "Sedan",
-                "tipoMotor": "Gasolina",
-                "nroAsientos": 5,
-                "kilometraje": 20000
+                "Id": "1",
+                "FechaHoraIngreso": "2021-06-01T00:00:00",
+                "FechaHoraSalida": null,
+                "FechaHoraRetiro": null,
+                "MontoTotal": null,
+                "TipoReparacion": "1",
+                "IdVehiculo": "1"
             }
             """;
 
-
-        mockMvc.perform(put("/api/v1/reparacions/reparacion")
+        mockMvc.perform(put("/api/v1/reparaciones/reparacion")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(reparacionJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.patente", is("GHI789")));
+                .andExpect(jsonPath("$.id", is(1)));
     }
 
     @Test
     public void deleteReparacionById_ShouldReturn204() throws Exception {
 
         ReparacionEntity savedReparacion = new ReparacionEntity();
-        savedReparacion.setPatente("GHI789");
-        savedReparacion.setMarca("Chevrolet");
-        savedReparacion.setModelo("Cruze");
-        savedReparacion.setAnnoFabricacion("2019");
-        savedReparacion.setTipoReparacion("Sedan");
-        savedReparacion.setTipoMotor("Gasolina");
-        savedReparacion.setNroAsientos(5);
-        savedReparacion.setKilometraje(20000);
+        savedReparacion.setFechaHoraIngreso(LocalDateTime.now());
+        savedReparacion.setFechaHoraSalida(null);
+        savedReparacion.setFechaHoraRetiro(null);
+        savedReparacion.setMontoTotal(null);
+        savedReparacion.setTipoReparacion("1");
+        savedReparacion.setIdVehiculo("1");
 
         when(reparacionService.deleteReparacion(1L)).thenReturn(true); // Assuming the method returns a boolean
 
-        mockMvc.perform(delete("/api/v1/reparacions/reparacion/{id}", 1L))
+        mockMvc.perform(delete("/api/v1/reparaciones/reparacion/{id}", 1L))
                 .andExpect(status().isNoContent());
-    }*/
+    }
 }

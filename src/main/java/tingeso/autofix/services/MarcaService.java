@@ -30,7 +30,6 @@ public class MarcaService {
         int anio = marca.getFechaBono().getYear();
         LocalDateTime fecha = LocalDateTime.of(anio, mes, 1, 0, 0);
         marca.setFechaBono(fecha);
-
         //si la marca ya existe para la fecha, sobre escribir la cantidad de bonos
         Optional<MarcaEntity> optionalMarca = Optional.ofNullable(marcaRepository.findByNombreAndFechaBono(marca.getFechaBono(), marca.getNombre()));
         if (optionalMarca.isPresent()) {
@@ -43,11 +42,9 @@ public class MarcaService {
         marcaRepository.save(marca);
         return marca;
     }
-
     public MarcaEntity updateMarca(MarcaEntity marca) {
         return marcaRepository.save(marca);
     }
-
     public boolean deleteMarca(Long id) throws Exception {
         try {
             marcaRepository.deleteById(id);
@@ -56,17 +53,14 @@ public class MarcaService {
             throw new Exception(e.getMessage());
         }
     }
-
     public MarcaEntity findById(Long marcaId) {
         Optional<MarcaEntity> optionalMarca = marcaRepository.findById(marcaId);
         return optionalMarca.orElse(null);
     }
-
     public Optional<MarcaEntity> findByNombre(String nombre) {
         Optional<MarcaEntity> optionalMarca = marcaRepository.findByNombre(nombre);
         return Optional.ofNullable(optionalMarca.orElse(null));
     }
-
     public MarcaEntity findByFechaBonoMarca(LocalDateTime fechaBono, String marca) {
         //print in the console
         System.out.println("fechaBono: " + fechaBono);
@@ -81,24 +75,5 @@ public class MarcaService {
 
         return optionalMarca;
     }
-
-    //ejemplo de cada linea a procesar Toyota: 5 bonos de 70.000 pesos
-    public void processFile(MultipartFile file, String filename) throws IOException {
-        //el filename es la fecha de la forma dia-mes-año, separarlo y convertirlo a LocalDateTime
-        LocalDateTime fechaBono = LocalDateTime.parse(filename, DateTimeFormatter.ofPattern("dd-MM-yyyy")).withDayOfMonth(1);
-        InputStream inputStream = file.getInputStream();
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        String line;
-        while ((line = bufferedReader.readLine()) != null) {
-            MarcaEntity marca = new MarcaEntity();
-            String[] data = line.split(":");
-            marca.setNombre(data[0]);
-            marca.setCantidadBonos(Integer.parseInt(data[1].split(" ")[0]));
-            marca.setDescuento(Integer.parseInt(data[1].split(" ")[2]));
-            marca.setFechaBono(fechaBono);
-            marcaRepository.save(marca);
-        }
-    }
-
 
 }
