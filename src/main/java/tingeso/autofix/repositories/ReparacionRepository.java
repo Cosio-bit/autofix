@@ -32,7 +32,6 @@ public interface ReparacionRepository extends JpaRepository<ReparacionEntity, Lo
     @Query(value = "SELECT * FROM reparaciones WHERE id_vehiculo = :id_vehiculo", nativeQuery = true)
     List<ReparacionEntity> findByVehiculoID(@Param("id_vehiculo") String id_vehiculo);
 
-    
 
 
 }

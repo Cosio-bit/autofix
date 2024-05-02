@@ -7,6 +7,7 @@ import java.time.Period;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import tingeso.autofix.repositories.ReparacionRepository;
 import tingeso.autofix.repositories.VehiculoRepository;
@@ -112,7 +113,6 @@ public class PagoService {
     public double precioReparacionVSMotor(ReparacionEntity reparacion) {
         //obtener el tipo de motor del vehiculo
         int motorNum = numeroMotor(reparacion);
-
         //sea una string separada por comas con los tipos de reparacion, obtener cada tipo de reparacion en un arreglo donde cada vez que se encuentre una coma se separa
         String tipoReparacion = reparacion.getTipoReparacion();
         String[] tipoReparacionArray = tipoReparacion.split(",");
@@ -129,7 +129,6 @@ public class PagoService {
         return montoTotal;
     }
 
-
     public double descuentoCantidadReparaciones(ReparacionEntity reparacion) {
 
         int cantidadReparaciones = reparacionRepository.findByVehiculoID(reparacion.getIdVehiculo()).size();
@@ -145,11 +144,9 @@ public class PagoService {
 
         return descuentosMotor[cantidadReparaciones][motorNum];
     }
-
     public double descuentoDiaAtencion(ReparacionEntity reparacion) {
         //obtener la fecha de la reparacion
         LocalDateTime fechaReparacion = reparacion.getFechaHoraIngreso();
-        //obtener el dia de la semana de la reparacion
         int diaSemana = fechaReparacion.getDayOfWeek().getValue();
         int horaIngreso = fechaReparacion.getHour();
         //si la reparacion se realiza un dia lunes o jueves entre las  09:00 hrs y las 12:00 hrs. se aplica un descuento del 10%
@@ -241,23 +238,18 @@ public class PagoService {
         return recargoKilometraje(reparacion) + recargoAntiguedadVehiculo(reparacion) + recargoDiasDesdeSalida(reparacion);
     }
 
-    public int totalPagar(ReparacionEntity reparacion) {
+    public Pair<Integer, String> calcularPago(ReparacionEntity reparacion) {
         double monto = precioReparacionVSMotor(reparacion);
         double descuento = descuentos(reparacion);
         double recargo = recargos(reparacion);
         double descuentoMarca = descuentoMarca(reparacion);
 
-
-        //print each value in the console
-        System.out.println("monto: " + monto);
-        System.out.println("descuento: " + descuento);
-        System.out.println("recargo: " + recargo);
-        System.out.println("descuentoMarca: " + descuentoMarca);
-
         // Round up each calculated value to ensure it doesn't exceed the bounds of an int
         double total = Math.ceil(monto - (monto * descuento) + (monto * recargo) - descuentoMarca);
+        //make a string with all the values
+        String totalPagar = "monto: " + String.valueOf(monto) + "\n descuento: " + String.valueOf(descuento*monto) + "\n recargo: " + String.valueOf(recargo*monto) + "\n descuentoMarca: " + String.valueOf(descuentoMarca) + "\n total: " + String.valueOf(total);
 
         // Convert the total to an int
-        return (int) total;
+        return Pair.of((int) total, totalPagar);
     }
 }

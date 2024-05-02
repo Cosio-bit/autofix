@@ -2,6 +2,7 @@
 package tingeso.autofix.services;
 
 import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -9,11 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import tingeso.autofix.entities.ReparacionEntity;
+import tingeso.autofix.entities.VehiculoEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -23,6 +26,7 @@ class ReparacionServiceTest {
    private ReparacionService reparacionService;
    ReparacionEntity reparacion = new ReparacionEntity();
 
+
    @BeforeEach
    void setUp() {
       reparacion.setId(2L);
@@ -30,7 +34,7 @@ class ReparacionServiceTest {
        reparacion.setFechaHoraSalida(null);
        reparacion.setMontoTotal(null);
        reparacion.setTipoReparacion("1");
-       reparacion.setIdVehiculo("2");
+       reparacion.setIdVehiculo("1");
    }
 
    @Test
@@ -55,7 +59,7 @@ class ReparacionServiceTest {
    @Test
    void whenGuardarReparacion_thenObtenerReparacionesByVehiculo() {
        ReparacionEntity reparacionEntity = this.reparacionService.guardarReparacion(reparacion);
-      ReparacionEntity reparacion1 = this.reparacionService.obtenerReparacionesPorIdVehiculo("2").get(0);
+      ReparacionEntity reparacion1 = this.reparacionService.obtenerReparacionesPorIdVehiculo("1").get(1);
       assertThat(reparacion1.getFechaHoraIngreso()).isEqualToIgnoringHours(reparacion.getFechaHoraIngreso());
       assertThat(reparacion1.getTipoReparacion()).isEqualTo(reparacion.getTipoReparacion());
       assertThat(reparacion1.getIdVehiculo()).isEqualTo(reparacion.getIdVehiculo());
@@ -84,9 +88,31 @@ class ReparacionServiceTest {
    @Test
    void whenGuardarReparacion_thenUpdateMontoTotal() {
       ReparacionEntity reparacionEntity = this.reparacionService.guardarReparacion(reparacion);
-      ReparacionEntity reparacion1 = this.reparacionService.updateMontoTotal(reparacion);
+      ReparacionEntity reparacion1 = this.reparacionService.updateMontoTotal(reparacion).getLeft();
       assertThat(reparacion1.getMontoTotal()).isEqualTo(99000);
    }
+
+   @Test
+   void whenGuardarReparacion_thenObtenerReparacionesPorMarca() {
+      ReparacionEntity reparacionEntity = this.reparacionService.guardarReparacion(reparacion);
+      List<ReparacionEntity> reparaciones = this.reparacionService.obtenerReparacionesPorMarca("Chevrolet");
+      assertThat(reparaciones.size()).isEqualTo(2);
+   }
+
+   @Test
+   void whenGuardarReparacion_thenObtenerReparacionesPorTipoVehiculo() {
+      ReparacionEntity reparacionEntity = this.reparacionService.guardarReparacion(reparacion);
+      List<ReparacionEntity> reparaciones = this.reparacionService.obtenerReparacionesPorTipoVehiculo("Sedan");
+      assertThat(reparaciones.size()).isEqualTo(1);
+   }
+
+   @Test
+   void whenGuardarReparacion_thenObtenerReparacionesPorTipoMotor() {
+      ReparacionEntity reparacionEntity = this.reparacionService.guardarReparacion(reparacion);
+      List<ReparacionEntity> reparaciones = this.reparacionService.obtenerReparacionesPorTipoMotor("Gasolina");
+      assertThat(reparaciones.size()).isEqualTo(2);
+   }
+   
 
 
 

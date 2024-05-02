@@ -62,9 +62,7 @@ public class MarcaService {
         return Optional.ofNullable(optionalMarca.orElse(null));
     }
     public MarcaEntity findByFechaBonoMarca(LocalDateTime fechaBono, String marca) {
-        //print in the console
-        System.out.println("fechaBono: " + fechaBono);
-        System.out.println("marca: " + marca);
+
         MarcaEntity optionalMarca = marcaRepository.findByNombreAndFechaBono(fechaBono, marca);
         //si la marca no existe o no le quedan bonos, retornar null
         if (optionalMarca == null || optionalMarca.getCantidadBonos() == 0) {

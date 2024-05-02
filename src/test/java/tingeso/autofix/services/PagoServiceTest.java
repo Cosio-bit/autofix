@@ -130,7 +130,7 @@ class PagoServiceTest {
 
     @Test
     void whenTotalPagar_thenTotalPagar() {
-        double total = pagoService.totalPagar(reparacion);
+        double total = pagoService.calcularPago(reparacion).getFirst();
         assertThat(total).isEqualTo(267500);
     }
 

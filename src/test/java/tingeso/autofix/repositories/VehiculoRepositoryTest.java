@@ -191,11 +191,10 @@ class VehiculoRepositoryTest {
         entityManager.flush();
 
        // when
-       Optional<VehiculoEntity> foundVehiculos = vehiculoRepository.findByTipoMotor("Híbrido");
-       List<VehiculoEntity> vehiculos = Collections.singletonList(foundVehiculos.get());
+       List<VehiculoEntity> foundVehiculos = vehiculoRepository.findByTipoMotor("Híbrido");
 
         // then
-        assertThat(vehiculos).hasSize(1).extracting(VehiculoEntity::getTipoMotor).containsOnly("Híbrido");
+        assertThat(foundVehiculos).hasSize(1).extracting(VehiculoEntity::getTipoMotor).containsOnly("Híbrido");
     }
 
 

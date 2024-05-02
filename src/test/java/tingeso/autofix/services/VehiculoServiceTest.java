@@ -35,7 +35,6 @@ class VehiculoServiceTest {
 
    @Test
    void whenGuardarVehiculo_thenVehiculoGuardado() {
-      
       VehiculoEntity vehiculoEntity = this.vehiculoService.guardarVehiculo(vehiculo);
       assertThat(vehiculoEntity).isEqualTo(this.vehiculo);
    }
@@ -68,6 +67,36 @@ class VehiculoServiceTest {
       vehiculo2.setPatente("GHI380");
       this.vehiculoService.updateVehiculo(vehiculo2);
       assertThat(vehiculo2.getPatente()).isEqualTo("GHI380");
+   }
+
+
+   @Test
+   void whenGuardarVehiculoAndMarca_thenCorrect() {
+      VehiculoEntity vehiculo2 = this.vehiculoService.obtenerVehiculosPorMarca("Chevrolet").get(4);
+      assertThat(vehiculo.getMarca()).isEqualTo(vehiculo2.getMarca());
+   }
+
+   @Test
+   void whenGuardarVehiculoAndModelo_thenCorrect() {
+      VehiculoEntity vehiculo2 = this.vehiculoService.obtenerVehiculosPorTipoMotor("Gasolina").get(4);
+      assertThat(vehiculo.getTipoMotor()).isEqualTo(vehiculo2.getTipoMotor());
+   }
+
+   @Test
+   void whenGuardarVehiculoAndTipoVehiculo_thenCorrect() {
+      VehiculoEntity vehiculo2 = this.vehiculoService.obtenerVehiculosPorTipoVehiculo("Sedan").get(4);
+      assertThat(vehiculo.getTipoMotor()).isEqualTo(vehiculo2.getTipoMotor());
+   }
+
+   @Test
+   void whenDeleteVehiculo_thenCorrect() {
+      VehiculoEntity vehiculoEntity = this.vehiculoService.guardarVehiculo(vehiculo);
+      try {
+         this.vehiculoService.deleteVehiculo(vehiculoEntity.getId());
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+      assertThat(this.vehiculoService.obtenerVehiculos().size()).isEqualTo(5);
    }
 
 }

@@ -29,11 +29,10 @@ public interface VehiculoRepository extends JpaRepository<VehiculoEntity, Long> 
     List<VehiculoEntity> findByTipoVehiculo(@Param("tipoVehiculo") String tipoVehiculo);
 
     @Query(value = "SELECT * FROM vehiculos WHERE tipo_motor = :tipoMotor", nativeQuery = true)
-    Optional<VehiculoEntity> findByTipoMotor(@Param("tipoMotor") String tipoMotor);
+    List<VehiculoEntity> findByTipoMotor(@Param("tipoMotor") String tipoMotor);
 
     @Query(value = "SELECT * FROM vehiculos WHERE nro_asientos = :nroAsientos", nativeQuery = true)
     List<VehiculoEntity> findByNroAsientos(@Param("nroAsientos") int nroAsientos);
-
 
     @Query(value = "SELECT * FROM vehiculos WHERE kilometraje = :kilometraje", nativeQuery = true)
     Optional<VehiculoEntity> findByKilometraje(@Param("kilometraje") int kilometraje);

@@ -4,9 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tingeso.autofix.entities.ReparacionEntity;
+import tingeso.autofix.entities.VehiculoEntity;
 import tingeso.autofix.services.ReparacionService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -28,6 +31,24 @@ public class ReparacionController {
         return reparacionService.obtenerReparacionesPorIdVehiculo(id);
     }
 
+    //obtener todas las reparaciones de una marca de vehiculo
+    @GetMapping("/marca/{marca}")
+    public List<ReparacionEntity> mostrarReparacionesPorMarca(@PathVariable("marca") String marca) {
+        return reparacionService.obtenerReparacionesPorMarca(marca);
+    }
+
+    //obtener todas las reparaciones de un tipo de vehiculo
+    @GetMapping("/tipoVehiculo/{tipoVehiculo}")
+    public List<ReparacionEntity> mostrarReparacionesPorTipoVehiculo(@PathVariable("tipoVehiculo") String tipoVehiculo) {
+        return reparacionService.obtenerReparacionesPorTipoVehiculo(tipoVehiculo);
+    }
+
+    //obtener todas las reparaciones de un tipo de motor
+    @GetMapping("/tipoMotor/{tipoMotor}")
+    public List<ReparacionEntity> mostrarReparacionesPorTipoMotor(@PathVariable("tipoMotor") String tipoMotor) {
+        return reparacionService.obtenerReparacionesPorTipoMotor(tipoMotor);
+    }
+
     @GetMapping("/reparacion/{id}")
     public Optional<ReparacionEntity> mostrarReparacion(@PathVariable Long id) {
         Optional<ReparacionEntity> reparacion = Optional.ofNullable(reparacionService.findById(id));
@@ -46,9 +67,14 @@ public class ReparacionController {
     }
 
     @PutMapping("/reparacion/monto")
-    public ResponseEntity<ReparacionEntity> updateMonto(@RequestBody ReparacionEntity reparacion){
-        ReparacionEntity reparacionUpdated = reparacionService.updateMontoTotal(reparacion);
-        return ResponseEntity.ok(reparacionUpdated);
+    public ResponseEntity<String> updateMonto(@RequestBody ReparacionEntity reparacion) {
+        // Update the total amount
+        reparacionService.updateMontoTotal(reparacion).getLeft();
+
+        // Custom response map containing both the updated entity and a separate string
+        String additionalString = reparacionService.updateMontoTotal(reparacion).getRight();
+
+        return ResponseEntity.ok(additionalString);
     }
 
     @PutMapping("/reparacion")
