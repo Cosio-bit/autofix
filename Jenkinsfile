@@ -6,23 +6,19 @@ pipeline {
     stages {
         stage("Build JAR File") {
             steps {
-                checkout scm
-                script {
-                    bat "mvn clean install"
-                }
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/cosio-bit/autofix']]])
+                bat "mvn clean install"
             }
         }
         stage("Test") {
             steps {
-                script {
-                    bat "mvn test"
-                }
+                bat "mvn test"
             }
         }
         stage("Build and Push Docker Image") {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'docker-credentials') {
+                    withDockerRegistry([credentialsId: 'docker-credentials']) {
                         bat "docker build -t cosiobit/autofix-backend ."
                         bat "docker push cosiobit/autofix-backend"
                     }
