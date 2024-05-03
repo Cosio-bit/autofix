@@ -9,7 +9,7 @@ pipeline{
             steps{
                 checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Cosio-bit/autofix']])
                 dir("autofix"){
-                    bat "mvn clean install"
+                    bat "mvn install"
                 }
             }
         }
