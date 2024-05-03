@@ -28,7 +28,7 @@ class MarcaServiceTest {
         this.marca.setNombre("Toyota");
         this.marcaService.guardarMarca(marca);
 
-        MarcaEntity marca1 = this.marcaService.obtenerMarcas().get(1);
+        MarcaEntity marca1 = this.marcaService.obtenerMarcas().get(2);
         assertThat(marca).isEqualTo(marca1);
     }
 
