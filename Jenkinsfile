@@ -1,26 +1,34 @@
-pipeline{
+pipeline {
     agent any
-    tools{
-        maven "maven"
+    environment {
+        DOCKER_CREDENTIALS = 'docker-credentials'
+        DOCKER_IMAGE_NAME = 'cosiobit/autofix-backend'
     }
-    stages{
-        stage("Build JAR File"){
-            steps{
-                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/cosio-bit/autofix']])
-                bat "mvn clean install"
+    tools {
+        maven "maven" // Assuming "maven" is a valid tool installation in Jenkins
+    }
+    stages {
+        stage("Build JAR File") {
+            steps {
+                script {
+                    checkout scm
+                    bat "mvn clean install" // Changed "maven" to "mvn"
+                }
             }
         }
-        stage("Test"){
-            steps{
-                bat "mvn test"
+        stage("Test") {
+            steps {
+                script {
+                    bat "mvn test" // Changed "maven" to "mvn"
+                }
             }
         }
-        stage("Build and Push Docker Image"){
-            steps{
-                script{
-                    withDockerRegistry(credentialsId: 'docker-credentials'){
-                        bat "docker build -t cosiobit/autofix-backend ."
-                        bat "docker push cosiobit/autofix-backend"
+        stage("Build and Push Docker Image") {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: DOCKER_CREDENTIALS, url: "") {
+                        bat "docker build -t ${DOCKER_IMAGE_NAME} ."
+                        bat "docker push ${DOCKER_IMAGE_NAME}"
                     }
                 }
             }
