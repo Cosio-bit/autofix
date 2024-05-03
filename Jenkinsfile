@@ -8,21 +8,21 @@ pipeline{
         stage("Build JAR File"){
             steps{
                 checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/cosio-bit/autofix']])
-                dir(""){
+                dir("autofix"){
                     bat "mvn clean install"
                 }
             }
         }
         stage("Test"){
             steps{
-                dir(""){
+                dir("autofix"){
                     bat "mvn test"
                 }
             }
         }
         stage("Build and Push Docker Image"){
             steps{
-                dir(""){
+                dir("autofix"){
                     script{
                          withDockerRegistry(credentialsId: 'docker-credentials'){
                             bat "docker build -t cosiobit/autofix-backend ."
